@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-export default {
+const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -11,8 +11,26 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        primary: "var(--primary)",
+        "primary-hover": "var(--primary-hover)",
+        muted: "var(--muted)",
+        "muted-hover": "var(--muted-hover)",
+        "muted-foreground": "var(--muted-foreground)",
+        card: "var(--card)",
+        "card-foreground": "var(--card-foreground)",
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+        error: "var(--error)",
+        success: "var(--success)",
+      },
+      animation: {
+        'aurora-left': 'aurora-left 15s linear infinite',
+        'aurora-right': 'aurora-right 15s linear infinite',
       },
     },
   },
   plugins: [],
-} satisfies Config;
+};
+
+export default config;
