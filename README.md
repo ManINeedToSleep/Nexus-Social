@@ -28,7 +28,7 @@ A minimal social media platform built with Next.js, Tailwind CSS, Firebase, Zust
 ## Tech Stack
 
 - **Frontend:**  
-  - [Next.js](https://nextjs.org/) (React 18/19) with App Router  
+  - [Next.js](https://nextjs.org/) (React 19) with App Router  
   - [Tailwind CSS](https://tailwindcss.com/)  
   - [Framer Motion](https://www.framer.com/motion/)  
 - **State Management:**  
@@ -36,8 +36,8 @@ A minimal social media platform built with Next.js, Tailwind CSS, Firebase, Zust
 - **Backend:**  
   - [Firebase](https://firebase.google.com/) for Authentication, Firestore, and Storage  
   - Custom Express server with [Socket.io](https://socket.io/) for real-time messaging (in the `/server` folder)
-- **Optional:**  
-  - TypeScript (our project supports it, as seen with the `tailwind.config.ts` file)
+- **Main Coding Language**
+  - TypeScript
 
 ## Folder Structure
 
