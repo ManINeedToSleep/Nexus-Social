@@ -1,81 +1,192 @@
+'use client';
+
 import Link from "next/link";
+import { motion } from "framer-motion";
+import ShinyText from '@/components/ShinyText';
 
 export default function Home() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.5,
+      },
+    },
+    hover: {
+      scale: 1.05,
+      transition: {
+        duration: 0.2,
+      },
+    },
+  };
+
   return (
     <main className="aurora-gradient absolute inset-0">
-      <br></br>
+      <br />
       {/* Hero Section */}
-      <div className="relative min-h-screen flex flex-col pt-16"> {/* pt-16 to account for navbar */}
-        <div className="flex-1 flex items-center justify-center">
+      <div className="relative min-h-screen flex flex-col pt-16">
+        <motion.div 
+          className="flex-1 flex items-center justify-center relative z-[2] pointer-events-auto"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <div className="max-w-4xl mx-auto space-y-8 px-4 text-center">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight">
+            <motion.h1 
+              className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight"
+              variants={itemVariants}
+            >
               Connect, Share, and Engage with
-              <span className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500">
+              <motion.span 
+                className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500"
+                animate={{ 
+                  backgroundPosition: ["0%", "100%", "0%"],
+                }}
+                transition={{ 
+                  duration: 10,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+                style={{ backgroundSize: "200%" }}
+              >
                 Nexus Social
-              </span>
-            </h1>
+              </motion.span>
+            </motion.h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+            <motion.p 
+              className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto"
+              variants={itemVariants}
+            >
               Join our community where ideas flow freely, connections are meaningful, 
               and every voice matters.
-            </p>
+            </motion.p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
-              <Link href="/signup" className="btn-primary px-12 py-4 text-lg">
-                Get Started
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-6 justify-center pt-8"
+              variants={itemVariants}
+            >
+              <Link href="/auth" className="relative z-[2] cursor-pointer">
+                <motion.span 
+                  className="btn-primary px-12 py-4 text-lg inline-block"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Get Started
+                </motion.span>
               </Link>
-              <Link href="/about" className="btn-secondary px-12 py-4 text-lg">
-                Learn More
+              <Link href="/auth" className="relative z-[2] cursor-pointer">
+                <motion.span 
+                  className="btn-secondary px-12 py-4 text-lg inline-block"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Learn More
+                </motion.span>
               </Link>
-            </div>
+            </motion.div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-20">
-              <div className="space-y-2">
-                <h3 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-blue-500">
-                  10K+
-                </h3>
-                <p className="text-muted-foreground text-lg">Active Users</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500">
-                  50K+
-                </h3>
-                <p className="text-muted-foreground text-lg">Posts Shared</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-cyan-500">
-                  24/7
-                </h3>
-                <p className="text-muted-foreground text-lg">Active Community</p>
-              </div>
-            </div>
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-20 relative z-[2]"
+              variants={containerVariants}
+            >
+              {[
+                { 
+                  number: "10K+", 
+                  text: "Active Users", 
+                  gradient: "from-purple-500 to-blue-500",
+                  speed: 4
+                },
+                { 
+                  number: "50K+", 
+                  text: "Posts Shared", 
+                  gradient: "from-blue-500 to-cyan-500",
+                  speed: 5
+                },
+                { 
+                  number: "24/7", 
+                  text: "Active Community", 
+                  gradient: "from-purple-500 to-cyan-500",
+                  speed: 6
+                }
+              ].map((stat, index) => (
+                <motion.div 
+                  key={index}
+                  className="space-y-2"
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <ShinyText 
+                    text={stat.number}
+                    className="text-4xl font-bold"
+                    gradient={stat.gradient}
+                    speed={stat.speed}
+                  />
+                  <p className="text-muted-foreground text-lg">{stat.text}</p>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Feature Section */}
-        <div className="container-custom py-24">
+        <motion.div 
+          className="container-custom py-24 relative z-[2]"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           <div className="grid md:grid-cols-3 gap-12">
-            <div className="card backdrop-blur-sm bg-card/30">
-              <h3 className="text-xl font-semibold mb-2">Connect Globally</h3>
-              <p className="text-muted-foreground">
-                Build meaningful connections with people from around the world.
-              </p>
-            </div>
-            <div className="card backdrop-blur-sm bg-card/30">
-              <h3 className="text-xl font-semibold mb-2">Share Stories</h3>
-              <p className="text-muted-foreground">
-                Share your experiences and ideas with a supportive community.
-              </p>
-            </div>
-            <div className="card backdrop-blur-sm bg-card/30">
-              <h3 className="text-xl font-semibold mb-2">Engage Authentically</h3>
-              <p className="text-muted-foreground">
-                Participate in genuine conversations that matter to you.
-              </p>
-            </div>
+            {[
+              {
+                title: "Connect Globally",
+                description: "Build meaningful connections with people from around the world."
+              },
+              {
+                title: "Share Stories",
+                description: "Share your experiences and ideas with a supportive community."
+              },
+              {
+                title: "Engage Authentically",
+                description: "Participate in genuine conversations that matter to you."
+              }
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                className="card backdrop-blur-sm bg-card/30"
+                variants={cardVariants}
+                whileHover="hover"
+              >
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
+              </motion.div>
+            ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </main>
   );
