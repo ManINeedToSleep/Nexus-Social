@@ -1,16 +1,20 @@
+import { signUpWithEmail, loginWithEmail, signInWithGoogle, logout as firebaseLogout, createUserInFirestore } from './firebase';
+import { useAuthStore } from '@/store/useAuthStore';
+import { User, updateProfile } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
+
 // Temporary mock implementation - will be replaced with actual auth later
 
 export async function signIn(email: string, password: string): Promise<void> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // Basic validation
-  if (!email || !password) {
-    throw new Error('Please provide both email and password');
+  try {
+    const user = await loginWithEmail(email, password);
+    useAuthStore.getState().setUser(user);
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      throw new Error(error.message);
+    }
+    throw new Error('Invalid credentials');
   }
-
-  // TODO: Implement actual authentication
-  console.log('Sign in:', { email });
 }
 
 export async function signUp(
@@ -18,33 +22,55 @@ export async function signUp(
   email: string,
   password: string
 ): Promise<void> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
-
-  // Basic validation
-  if (!name || !email || !password) {
-    throw new Error('Please provide all required fields');
+  try {
+    const user = await signUpWithEmail(email, password);
+    if (user) {
+      await updateProfile(user, { displayName: name });
+      await createUserInFirestore(user);
+      useAuthStore.getState().setUser(user);
+    }
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      throw new Error(error.message);
+    }
+    throw new Error('Registration failed');
   }
+}
 
-  // Email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    throw new Error('Please provide a valid email address');
+export async function signInWithGoogleProvider(): Promise<void> {
+  try {
+    const user = await signInWithGoogle();
+    useAuthStore.getState().setUser(user);
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      // Handle specific Firebase errors
+      switch (error.code) {
+        case 'auth/popup-blocked':
+          throw new Error('Please enable popups for this website');
+        case 'auth/cancelled-popup-request':
+          throw new Error('Sign in cancelled');
+        case 'auth/unauthorized-domain':
+          throw new Error('This domain is not authorized for Google sign in');
+        default:
+          throw new Error(error.message);
+      }
+    }
+    throw new Error('Google sign in failed');
   }
-
-  // TODO: Implement actual registration
-  console.log('Sign up:', { name, email });
 }
 
 export async function signOut(): Promise<void> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  // TODO: Implement actual sign out
-  console.log('Sign out');
+  try {
+    await firebaseLogout();
+    useAuthStore.getState().setUser(null);
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      throw new Error(error.message);
+    }
+    throw new Error('Sign out failed');
+  }
 }
 
-export async function getCurrentUser() {
-  // TODO: Implement actual user fetching
-  return null;
+export async function getCurrentUser(): Promise<User | null> {
+  return useAuthStore.getState().user;
 } 
