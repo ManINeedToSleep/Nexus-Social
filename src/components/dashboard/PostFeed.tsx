@@ -1,3 +1,16 @@
+/**
+ * Post Feed Component
+ * 
+ * Core component for displaying and managing posts. Features:
+ * - Real-time post updates
+ * - Post creation
+ * - Like/Unlike functionality
+ * - Comments system
+ * - Optimistic updates
+ * 
+ * @note Uses Firebase for data and Socket.io for real-time
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -35,8 +48,7 @@ export default function PostFeed() {
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPost.trim()) return;
-    if (!user) return;
+    if (!newPost.trim() || !user) return;
 
     setLoading(true);
     try {

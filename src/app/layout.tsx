@@ -1,7 +1,18 @@
+/**
+ * Root Layout Component
+ * 
+ * This is the top-level layout component that wraps all pages.
+ * Handles:
+ * - Global styles and theme
+ * - Authentication persistence
+ * - Common UI elements
+ * - Meta tags and SEO
+ */
+
 'use client';
 
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "@/styles/globals.css";
 import Navbar from "@/components/Navbar";
 import { useAuth } from '@/hooks/useAuth';
 import { usePathname } from 'next/navigation';

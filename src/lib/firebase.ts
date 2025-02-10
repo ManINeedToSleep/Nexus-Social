@@ -1,3 +1,12 @@
+/**
+ * Firebase Configuration and Utilities
+ * 
+ * Central configuration for Firebase services and utility functions.
+ * Handles authentication, database operations, and real-time updates.
+ * 
+ * @note Ensure environment variables are properly set
+ */
+
 import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
@@ -33,6 +42,7 @@ import {
   ref, 
   deleteObject } from "firebase/storage";
 
+// Initialize Firebase with environment variables
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -42,18 +52,20 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Initialize services
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
+
+// Configure persistence
+setPersistence(auth, browserLocalPersistence);
+
 // Add these lines to configure Google provider
 googleProvider.setCustomParameters({
   prompt: 'select_account'
 });
 export const storage = getStorage(app);
-
-// Set persistence to LOCAL (survives browser restarts)
-setPersistence(auth, browserLocalPersistence);
 
 // Function to create a new user in Firestore after signing up
 export const createUserInFirestore = async (user: User) => {

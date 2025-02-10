@@ -1,3 +1,15 @@
+/**
+ * Landing Page Component
+ * 
+ * The main entry point of the application.
+ * Features:
+ * - Hero section with call-to-action
+ * - Authentication redirects
+ * - Marketing content
+ * 
+ * @note This is a server component by default in Next.js 13+
+ */
+
 'use client';
 
 import Link from "next/link";

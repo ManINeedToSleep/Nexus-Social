@@ -3,7 +3,18 @@ interface PasswordStrength {
   label: string;
   color: string;
 }
-
+/**
+ * Password Strength Checker
+ * 
+ * Originally from Cuisine Courier project.
+ * Validates password strength based on multiple criteria.
+ * 
+ * Criteria:
+ * - Minimum length
+ * - Special characters
+ * - Numbers
+ * - Upper/lowercase letters
+ */
 export function getPasswordStrength(password: string): PasswordStrength {
   // Calculate score based on various criteria
   let score = 0;

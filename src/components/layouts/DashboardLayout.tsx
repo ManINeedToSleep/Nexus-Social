@@ -1,30 +1,44 @@
+/**
+ * Dashboard Layout Component
+ * 
+ * Main layout for the dashboard area. Provides:
+ * - Common layout structure
+ * - Navigation integration
+ * - Sidebar management
+ * - Responsive design
+ * 
+ * @note This is a client component that handles protected routes
+ */
+
 'use client';
 
-import { ReactNode } from 'react';
-import Navbar from '@/components/Navbar';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/useAuthStore';
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
+import TrendingSidebar from '@/components/dashboard/TrendingSidebar';
 
-interface DashboardLayoutProps {
-  children: ReactNode;
-}
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const user = useAuthStore((state) => state.user);
+  const router = useRouter();
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  // Protected route check
+  useEffect(() => {
+    if (!user) {
+      router.push('/auth');
+    }
+  }, [user, router]);
+
+  if (!user) return null;
+
   return (
-    <div className="relative min-h-screen bg-background">
-      {/* Background Effects */}
-      <div className="pointer-events-none fixed inset-0 flex gap-4 items-center justify-center">
-        {/* Radial Gradient */}
-        <div className="relative flex h-screen w-screen items-center justify-center bg-background">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="aurora-gradient h-full w-full" />
-          </div>
-          <div className="absolute inset-0 bg-background [mask-image:radial-gradient(transparent,white)] dark:bg-background/90" />
+    <div className="min-h-screen bg-background">
+      <DashboardNavbar />
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex gap-8">
+          <main className="flex-1">{children}</main>
+          <TrendingSidebar />
         </div>
-      </div>
-
-      {/* Content */}
-      <Navbar variant="dashboard" />
-      <div className="pt-20">
-        {children}
       </div>
     </div>
   );
