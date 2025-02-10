@@ -11,17 +11,18 @@ import TrendingSidebar from '@/components/dashboard/TrendingSidebar';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { loading } = useAuth();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
-  useAuth();
 
-  // Protect the route
   useEffect(() => {
-    if (!user) {
+    if (!loading && !isAuthenticated) {
       router.push('/auth');
     }
-  }, [user, router]);
+  }, [isAuthenticated, router, loading]);
 
-  if (!user) return null;
+  if (loading) return null; // Or a loading spinner
+  if (!isAuthenticated || !user) return null;
 
   return (
     <DashboardLayout>

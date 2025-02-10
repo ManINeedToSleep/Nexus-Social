@@ -1,33 +1,43 @@
-import { signUpWithEmail, loginWithEmail, signInWithGoogle, logout as firebaseLogout, createUserInFirestore } from './firebase';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  setPersistence,
+  browserLocalPersistence
+} from 'firebase/auth';
+import { auth, googleProvider, createUserInFirestore } from './firebase';
 import { useAuthStore } from '@/store/useAuthStore';
 import { User, updateProfile } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
 
+// Set persistence to LOCAL
+setPersistence(auth, browserLocalPersistence);
+
 // Temporary mock implementation - will be replaced with actual auth later
 
-export async function signIn(email: string, password: string): Promise<void> {
+export const signIn = async (email: string, password: string): Promise<void> => {
   try {
-    const user = await loginWithEmail(email, password);
-    useAuthStore.getState().setUser(user);
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    useAuthStore.getState().setUser(result.user);
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
       throw new Error(error.message);
     }
     throw new Error('Invalid credentials');
   }
-}
+};
 
-export async function signUp(
+export const signUp = async (
   name: string,
   email: string,
   password: string
-): Promise<void> {
+): Promise<void> => {
   try {
-    const user = await signUpWithEmail(email, password);
-    if (user) {
-      await updateProfile(user, { displayName: name });
-      await createUserInFirestore(user);
-      useAuthStore.getState().setUser(user);
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    if (result.user) {
+      await updateProfile(result.user, { displayName: name });
+      await createUserInFirestore(result.user);
+      useAuthStore.getState().setUser(result.user);
     }
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
@@ -35,12 +45,13 @@ export async function signUp(
     }
     throw new Error('Registration failed');
   }
-}
+};
 
-export async function signInWithGoogleProvider(): Promise<void> {
+export const signInWithGoogleProvider = async (): Promise<void> => {
   try {
-    const user = await signInWithGoogle();
-    useAuthStore.getState().setUser(user);
+    const result = await signInWithPopup(auth, googleProvider);
+    await createUserInFirestore(result.user);
+    useAuthStore.getState().setUser(result.user);
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
       // Handle specific Firebase errors
@@ -57,19 +68,19 @@ export async function signInWithGoogleProvider(): Promise<void> {
     }
     throw new Error('Google sign in failed');
   }
-}
+};
 
-export async function signOut(): Promise<void> {
+export const signOut = async (): Promise<void> => {
   try {
-    await firebaseLogout();
-    useAuthStore.getState().setUser(null);
+    await auth.signOut();
+    useAuthStore.getState().logout();
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
       throw new Error(error.message);
     }
     throw new Error('Sign out failed');
   }
-}
+};
 
 export async function getCurrentUser(): Promise<User | null> {
   return useAuthStore.getState().user;

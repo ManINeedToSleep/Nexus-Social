@@ -12,21 +12,24 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export function useAuth() {
+  const [loading, setLoading] = useState(true);
   const setUser = useAuthStore(state => state.setUser);
 
   useEffect(() => {
-    // Subscribe to Firebase auth state changes
+    // Get initial auth state
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setLoading(false);
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, [setUser]);
+
+  return { loading };
 } 

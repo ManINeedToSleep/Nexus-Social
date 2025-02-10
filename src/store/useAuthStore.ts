@@ -7,17 +7,26 @@
  */
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { User } from "firebase/auth";
 
 interface AuthState {
-  user: User | null;      // Current authenticated user or null
-  setUser: (user: User | null) => void;  // Method to update user state
+  user: User | null;
+  isAuthenticated: boolean;
+  setUser: (user: User | null) => void;
+  logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  // Initial state: no authenticated user
-  user: null,
-  
-  // Method to update the authenticated user
-  setUser: (user) => set({ user }),
-}));
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      isAuthenticated: false,
+      setUser: (user) => set({ user, isAuthenticated: !!user }),
+      logout: () => set({ user: null, isAuthenticated: false }),
+    }),
+    {
+      name: 'auth-storage',
+    }
+  )
+);
