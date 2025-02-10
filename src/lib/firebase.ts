@@ -1,5 +1,15 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, User } from "firebase/auth";
+import { 
+  getAuth, 
+  setPersistence, 
+  browserLocalPersistence,
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  signOut, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  User
+} from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, arrayUnion, arrayRemove, Timestamp, serverTimestamp } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -21,6 +31,9 @@ googleProvider.setCustomParameters({
   prompt: 'select_account'
 });
 export const storage = getStorage(app);
+
+// Set persistence to LOCAL (survives browser restarts)
+setPersistence(auth, browserLocalPersistence);
 
 // Function to create a new user in Firestore after signing up
 export const createUserInFirestore = async (user: User) => {

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useAuth } from '@/hooks/useAuth';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import PostFeed from '@/components/dashboard/PostFeed';
 import Sidebar from '@/components/dashboard/Sidebar';
@@ -11,14 +12,16 @@ import TrendingSidebar from '@/components/dashboard/TrendingSidebar';
 export default function DashboardPage() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
+  const { loading } = useAuth();
 
   // Protect the route
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       router.push('/auth');
     }
-  }, [user, router]);
+  }, [user, router, loading]);
 
+  if (loading) return null; // Or a loading spinner
   if (!user) return null;
 
   return (

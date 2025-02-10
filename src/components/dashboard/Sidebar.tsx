@@ -18,7 +18,7 @@ export default function Sidebar({ user }: SidebarProps) {
   ];
 
   return (
-    <div className="bg-card/30 backdrop-blur-md rounded-2xl border border-border p-6 sticky top-24">
+    <div className="bg-black/30 backdrop-blur-md rounded-2xl border border-border p-6 sticky top-24">
       {/* User Profile Section */}
       <div className="text-center mb-6">
         <div className="relative w-24 h-24 mx-auto mb-4">

@@ -80,7 +80,7 @@ export default function PostFeed() {
   return (
     <div className="space-y-6">
       {/* Create Post Form */}
-      <div className="bg-card/30 backdrop-blur-md rounded-2xl border border-border p-4">
+      <div className="bg-black/30 backdrop-blur-md rounded-2xl border border-border p-4">
         {!isCreating ? (
           <button
             onClick={() => setIsCreating(true)}
@@ -178,7 +178,7 @@ export default function PostFeed() {
             key={post.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-card/30 backdrop-blur-md rounded-2xl border border-border p-6"
+            className="bg-black/30 backdrop-blur-md rounded-2xl border border-border p-6"
           >
             {/* Author Info */}
             <div className="flex items-center gap-3 mb-4">

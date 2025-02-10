@@ -1,7 +1,10 @@
-import type { Metadata } from "next";
+'use client';
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { useAuth } from '@/hooks/useAuth';
+import { usePathname } from 'next/navigation';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,21 +16,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Nexus Social",
-  description: "A modern social platform",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Initialize auth listener
+  useAuth();
+  const pathname = usePathname();
+  const isDashboard = pathname.startsWith('/dashboard');
+
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <div className="relative min-h-screen">
-          <Navbar />
+          {!isDashboard && <Navbar />}
           {children}
         </div>
       </body>

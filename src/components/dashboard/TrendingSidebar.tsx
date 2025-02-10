@@ -11,7 +11,7 @@ export default function TrendingSidebar() {
   ];
 
   return (
-    <div className="bg-card/30 backdrop-blur-md rounded-2xl border border-border p-6 sticky top-24">
+    <div className="bg-black/30 backdrop-blur-md rounded-2xl border border-border p-6 sticky top-24">
       <h2 className="text-xl font-bold mb-4">Trending Topics</h2>
       
       <div className="space-y-4">
