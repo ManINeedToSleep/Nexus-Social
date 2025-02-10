@@ -10,8 +10,28 @@ import {
   signInWithEmailAndPassword, 
   User
 } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, arrayUnion, arrayRemove, Timestamp, serverTimestamp } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { 
+  getFirestore, 
+  doc, 
+  setDoc, 
+  getDoc, 
+  collection, 
+  addDoc, 
+  query, 
+  orderBy, 
+  onSnapshot, 
+  updateDoc, 
+  arrayUnion, 
+  arrayRemove, 
+  Timestamp, 
+  serverTimestamp,
+  deleteDoc
+} from "firebase/firestore";
+
+import { 
+  getStorage, 
+  ref, 
+  deleteObject } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -80,13 +100,12 @@ export const logout = async () => {
 export interface Post {
   id: string;
   content: string;
-  imageUrl?: string;
   authorId: string;
   authorName: string;
   authorImage: string;
   likes: string[]; // Array of user IDs
   comments: Comment[];
-  createdAt: Timestamp;
+  createdAt: Timestamp | null;
 }
 
 export interface Comment {
@@ -101,20 +120,11 @@ export interface Comment {
 // Post functions
 export const createPost = async (
   content: string, 
-  imageFile: File | null, 
   user: User
 ): Promise<string> => {
   try {
-    let imageUrl;
-    if (imageFile) {
-      const imageRef = ref(storage, `posts/${user.uid}/${Date.now()}_${imageFile.name}`);
-      await uploadBytes(imageRef, imageFile);
-      imageUrl = await getDownloadURL(imageRef);
-    }
-
     const postRef = await addDoc(collection(db, 'posts'), {
       content,
-      imageUrl,
       authorId: user.uid,
       authorName: user.displayName || "",
       authorImage: user.photoURL || "/images/default_pfp.jpg",
@@ -125,16 +135,27 @@ export const createPost = async (
 
     return postRef.id;
   } catch (error) {
-    console.error('Error creating post:', error);
+    console.error('Error in createPost:', error);
     throw error;
   }
 };
 
 export const likePost = async (postId: string, userId: string) => {
   const postRef = doc(db, 'posts', postId);
-  await updateDoc(postRef, {
-    likes: arrayUnion(userId)
-  });
+  
+  // Optimistic update
+  const postSnapshot = await getDoc(postRef);
+  const currentLikes = postSnapshot.data()?.likes || [];
+  
+  if (currentLikes.includes(userId)) {
+    await updateDoc(postRef, {
+      likes: arrayRemove(userId)
+    });
+  } else {
+    await updateDoc(postRef, {
+      likes: arrayUnion(userId)
+    });
+  }
 };
 
 export const unlikePost = async (postId: string, userId: string) => {
@@ -144,11 +165,7 @@ export const unlikePost = async (postId: string, userId: string) => {
   });
 };
 
-export const addComment = async (
-  postId: string, 
-  content: string, 
-  user: User
-) => {
+export const addComment = async (postId: string, content: string, user: User) => {
   const postRef = doc(db, 'posts', postId);
   const comment: Comment = {
     id: Date.now().toString(),
@@ -162,6 +179,8 @@ export const addComment = async (
   await updateDoc(postRef, {
     comments: arrayUnion(comment)
   });
+  
+  // Could add notifications here for the post author
 };
 
 export const subscribeToPosts = (callback: (posts: Post[]) => void) => {
@@ -177,4 +196,21 @@ export const subscribeToPosts = (callback: (posts: Post[]) => void) => {
     })) as Post[];
     callback(posts);
   });
+};
+
+export const deletePost = async (postId: string, userId: string) => {
+  const postRef = doc(db, 'posts', postId);
+  const post = await getDoc(postRef);
+  
+  if (!post.exists() || post.data()?.authorId !== userId) {
+    throw new Error('Unauthorized or post not found');
+  }
+  
+  // Delete post image if exists
+  if (post.data()?.imageUrl) {
+    const imageRef = ref(storage, post.data().imageUrl);
+    await deleteObject(imageRef);
+  }
+  
+  await deleteDoc(postRef);
 };

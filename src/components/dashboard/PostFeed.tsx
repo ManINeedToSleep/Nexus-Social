@@ -1,23 +1,32 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/useAuthStore';
 import Image from 'next/image';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { Post, createPost, subscribeToPosts, likePost, unlikePost, addComment } from '@/lib/firebase';
 import { formatDistanceToNow } from 'date-fns';
+import { Timestamp } from 'firebase/firestore';
+
+// Helper function to safely format timestamp
+const formatTimestamp = (timestamp: Timestamp | null) => {
+  if (!timestamp) return 'Just now';
+  try {
+    return formatDistanceToNow(timestamp.toDate(), { addSuffix: true });
+  } catch {
+    return 'Just now';
+  }
+};
 
 export default function PostFeed() {
   const user = useAuthStore((state) => state.user);
   const [isCreating, setIsCreating] = useState(false);
   const [newPost, setNewPost] = useState('');
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [commentText, setCommentText] = useState('');
   const [activeComment, setActiveComment] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const unsubscribe = subscribeToPosts(setPosts);
@@ -26,26 +35,18 @@ export default function PostFeed() {
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPost.trim() && !selectedImage) return;
+    if (!newPost.trim()) return;
     if (!user) return;
 
     setLoading(true);
     try {
-      await createPost(newPost, selectedImage, user);
+      await createPost(newPost, user);
       setNewPost('');
-      setSelectedImage(null);
       setIsCreating(false);
     } catch (error) {
       console.error('Error creating post:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedImage(file);
     }
   };
 
@@ -115,37 +116,11 @@ export default function PostFeed() {
                 className="w-full p-3 bg-background rounded-lg resize-none min-h-[100px]"
                 disabled={loading}
               />
-              
-              {/* Image Upload */}
-              <div className="flex items-center gap-4">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageSelect}
-                  accept="image/*"
-                  className="hidden"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="btn-secondary"
-                >
-                  📷 Add Image
-                </button>
-                {selectedImage && (
-                  <span className="text-sm text-muted-foreground">
-                    {selectedImage.name}
-                  </span>
-                )}
-              </div>
 
               <div className="flex justify-end gap-3">
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsCreating(false);
-                    setSelectedImage(null);
-                  }}
+                  onClick={() => setIsCreating(false)}
                   className="btn-secondary"
                   disabled={loading}
                 >
@@ -154,7 +129,7 @@ export default function PostFeed() {
                 <button
                   type="submit"
                   className="btn-primary"
-                  disabled={loading || (!newPost.trim() && !selectedImage)}
+                  disabled={loading || !newPost.trim()}
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">
@@ -192,7 +167,7 @@ export default function PostFeed() {
               <div>
                 <p className="font-medium">{post.authorName}</p>
                 <p className="text-sm text-muted-foreground">
-                  {formatDistanceToNow(post.createdAt.toDate(), { addSuffix: true })}
+                  {formatTimestamp(post.createdAt)}
                 </p>
               </div>
             </div>
@@ -200,18 +175,6 @@ export default function PostFeed() {
             {/* Post Content */}
             <p className="mb-4">{post.content}</p>
             
-            {/* Post Image */}
-            {post.imageUrl && (
-              <div className="mb-4 rounded-lg overflow-hidden">
-                <Image
-                  src={post.imageUrl}
-                  alt="Post image"
-                  width={500}
-                  height={300}
-                  className="w-full object-cover"
-                />
-              </div>
-            )}
 
             {/* Post Actions */}
             <div className="flex items-center gap-6 text-muted-foreground">
@@ -242,18 +205,20 @@ export default function PostFeed() {
                 <div className="space-y-4">
                   {post.comments.map((comment) => (
                     <div key={comment.id} className="flex gap-3">
-                      <Image
-                        src={comment.authorImage || '/images/default_pfp.jpg'}
-                        alt={comment.authorName}
-                        width={32}
-                        height={32}
-                        className="rounded-full"
-                      />
+                      <div className="flex-shrink-0 w-8 h-8">
+                        <Image
+                          src={comment.authorImage || '/images/default_pfp.jpg'}
+                          alt={comment.authorName}
+                          width={32}
+                          height={32}
+                          className="rounded-full object-cover w-full h-full"
+                        />
+                      </div>
                       <div>
                         <p className="text-sm font-medium">{comment.authorName}</p>
                         <p className="text-sm">{comment.content}</p>
                         <p className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(comment.createdAt.toDate(), { addSuffix: true })}
+                          {formatTimestamp(comment.createdAt)}
                         </p>
                       </div>
                     </div>

@@ -1,211 +1,286 @@
-# Social App MVP
+<div align="center">
 
-A minimal social media platform built with Next.js, Tailwind CSS, Firebase, Zustand, and Socket.io. This MVP showcases core functionalities such as user authentication, text-based posting, and real-time private messaging.
+# 🌟 Nexus Social
 
-## Table of Contents
+A modern social platform built with cutting-edge technologies, featuring real-time interactions and a sleek dark theme UI.
 
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Folder Structure](#folder-structure)
-- [Installation and Setup](#installation-and-setup)
-- [Firebase Setup](#firebase-setup)
-- [Running the Application](#running-the-application)
-- [Deployment](#deployment)
-- [Git & .gitignore](#git--gitignore)
-- [Additional Notes](#additional-notes)
-- [Contributing](#contributing)
-- [License](#license)
+[![Next.js](https://img.shields.io/badge/Next.js-15.1.6-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.0.0-blue?logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Firebase](https://img.shields.io/badge/Firebase-11.3.0-orange?logo=firebase)](https://firebase.google.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## Features
+[Demo](your-demo-link) · [Documentation](your-docs-link) · [Report Bug](issues-link)
 
-- **User Authentication:** Sign up, login, and logout using Firebase Auth.
-- **User Profiles:** Manage and display user data.
-- **Posts:** Create and display text-based posts.
-- **Real-Time Messaging:** Chat functionality powered by Socket.io.
-- **UI Animations:** Enhanced interactions with Framer Motion.
-- **Responsive Design:** Styled with Tailwind CSS for a modern look.
+<img src="frontpage.socialfeed.png" alt="Nexus Social Feed Preview" width="800"/>
 
-## Tech Stack
+</div>
 
-- **Frontend:**  
-  - [Next.js](https://nextjs.org/) (React 19) with App Router  
-  - [Tailwind CSS](https://tailwindcss.com/)  
-  - [Framer Motion](https://www.framer.com/motion/)  
-- **State Management:**  
-  - [Zustand](https://github.com/pmndrs/zustand)
-- **Backend:**  
-  - [Firebase](https://firebase.google.com/) for Authentication, Firestore, and Storage  
-  - Custom Express server with [Socket.io](https://socket.io/) for real-time messaging (in the `/server` folder)
-- **Main Coding Language**
-  - TypeScript
+## ✨ Features
 
-## Folder Structure
+### 🔐 Authentication
+- **Secure Firebase Auth**
+  - Email/Password with validation
+  - One-click Google OAuth
+  - Persistent sessions
+  - Protected routes
 
-```
-my-social-app/
-├── public/                  # Static assets (logos, images, favicons)
-├── server/                  # Backend (Express + Socket.io)
-│   ├── index.js             # Server entry point (Socket.io & Express)
-│   └── package.json         # Server dependencies
-├── src/                     # Main application source code
-│   ├── app/                 # Next.js App Router pages & layouts
-│   │   ├── layout.tsx       # Global layout (e.g., Navbar, Footer)
-│   │   ├── page.tsx         # Home page
-│   │   ├── auth/            # Authentication pages (login, signup)
-│   │   ├── chat/            # Chat feature pages
-│   │   ├── posts/           # Posts/Feed pages
-│   │   └── profile/         # User profile pages
-│   ├── components/          # Reusable UI components
-│   ├── lib/                 # Utilities (Firebase setup, Socket.io client, etc.)
-│   ├── store/               # Global state management (Zustand stores)
-│   ├── hooks/               # Custom React hooks
-│   └── styles/              # Global and component-specific styles
-├── .env.local               # Environment variables (Firebase config, etc.)
-├── tailwind.config.ts       # Tailwind CSS configuration file (TypeScript)
-├── next.config.js           # Next.js configuration file
-├── package.json             # Project dependencies and scripts
-└── README.md                # Project documentation
-```
+### 📱 Social Core
+- **Dynamic Post System**
+  - Real-time post feed
+  - Like/Unlike interactions
+  - Nested comments
+  - Timestamp localization
 
-## Installation and Setup
+### ⚡ Real-Time
+- **Socket.io Integration**
+  - Instant messaging
+  - Live notifications
+  - Connection management
+  - Real-time updates
 
-### Prerequisites
+### 🎨 Modern UI
+- **Polished Design**
+  - Dark theme
+  - Glassmorphism effects
+  - Responsive layout
+  - Smooth animations
 
-- [Node.js](https://nodejs.org/) (v14 or later)
-- npm (or yarn)
-- A [Firebase](https://firebase.google.com/) account
+## 🛠️ Tech Stack
 
-### Steps
-
-1. **Clone the Repository**
-
-   ```bash
-   git clone <repository-url>
-   cd my-social-app
-
-## Installation
-
-### Frontend Dependencies
-
-bash
-npm install
-
-### Server Dependencies
-
-bash
-cd server
-npm install
-cd ..
-
-## Firebase Setup
-
-### 1. Create Firebase Project
-- Visit the [Firebase Console](https://console.firebase.google.com)
-- Create a new project
-
-### 2. Enable Firebase Services
-- **Authentication**: Enable sign-in methods (Email/Password, Google)
-- **Firestore Database**: Set up Firestore
-- **Cloud Storage**: Enable for image/profile storage
-
-### 3. Configure Environment Variables
-1. Get your Firebase configuration from project settings
-2. Create a `.env.local` file in the root directory:
-
-```env
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-```
-
-### 4. Firebase Initialization
-Create `src/lib/firebase.js`:
-```javascript
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
-
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const provider = new GoogleAuthProvider();
-```
-
-## Running the Application
-
-### Start Frontend (Next.js)
-
-bash
-cd server
-node index.js
-
-Your Socket.io server will be running on port 3001
-
-## Deployment
+<details>
+<summary>Click to expand</summary>
 
 ### Frontend
-Deploy your Next.js app to Vercel:
-- Connect your GitHub repository
-- Vercel will handle the deployment automatically
-
-### Backend (Socket.io Server)
-For production deployment of your real-time server, consider:
-- Render
-- Heroku
-
-## Project Configuration
-
-### Git & .gitignore
-Add the following to your `.gitignore`:
-
-```gitignore
-# Ignore node_modules in the root and subdirectories
-node_modules/
-**/node_modules/
-
-# Ignore environment variables
-.env.local
+```typescript
+{
+  "core": {
+    "framework": "Next.js 15.1.6",
+    "ui": "React 19.0.0",
+    "styling": "Tailwind CSS 3.4.1",
+    "animations": "Framer Motion 12.4.1",
+    "state": "Zustand 5.0.3"
+  }
+}
 ```
 
-## Additional Notes
+### Backend
+```typescript
+{
+  "services": {
+    "database": "Firebase/Firestore 11.3.0",
+    "auth": "Firebase Auth",
+    "realtime": {
+      "server": "Express 4.21.2",
+      "websockets": "Socket.io 4.8.1"
+    }
+  }
+}
+```
 
-### State Management
-- Using Zustand for lightweight, global state management
-- Check `src/store/` directory (e.g., `useAuthStore.js`)
+### Development
+```typescript
+{
+  "language": "TypeScript 5",
+  "linting": "ESLint 9",
+  "formatting": "Prettier",
+  "package-manager": "npm"
+}
+```
+</details>
 
-### Real-Time Messaging
-- Backend: See `server/index.js`
-- Frontend: See `src/lib/socket.js`
+## 📁 Project Structure
 
-### UI Components
-Several UI options available:
-- Chakra UI
-- Mantine
-- Headless UI
-- Radix UI
-- Framer Motion (for animations)
+<details>
+<summary>Expand to view full structure</summary>
 
-### TypeScript Support
-- Project supports TypeScript (e.g., `tailwind.config.ts`)
-- JavaScript examples can be converted to TypeScript as needed
+```
+nexus-social/
+├── 📱 src/
+│   ├── app/                      # Next.js pages & layouts
+│   │   ├── layout.tsx           # Root layout with providers
+│   │   ├── page.tsx             # Landing page
+│   │   ├── auth/
+│   │   │   ├── login/          # Login page
+│   │   │   └── register/       # Registration page
+│   │   └── dashboard/          # Protected dashboard routes
+│   ├── components/
+│   │   ├── auth/               # Authentication components
+│   │   │   ├── SignInForm.tsx
+│   │   │   └── RegisterForm.tsx
+│   │   ├── dashboard/          # Dashboard components
+│   │   │   ├── PostFeed.tsx    # Main post feed
+│   │   │   └── DashboardNavbar.tsx
+│   │   └── ui/                 # Shared UI components
+│   │       ├── Button.tsx
+│   │       └── LoadingSpinner.tsx
+│   ├── lib/                    # Core utilities
+│   │   ├── firebase.ts        # Firebase configuration
+│   │   └── socket.js          # Socket.io client setup
+│   ├── store/                  # State management
+│   │   └── useAuthStore.ts    # Authentication state
+│   ├── styles/                 # Global styles
+│   │   └── globals.css        # Tailwind imports
+│   ├── types/                  # TypeScript types
+│   │   └── index.ts           # Shared types
+│   └── utils/                  # Utility functions
+│       └── dateFormat.ts      # Date formatting
+├── 🔌 server/                  # Socket.io backend
+│   ├── index.js               # Express & Socket.io setup
+│   └── package.json           # Server dependencies
+├── 🎨 public/                 # Static assets
+│   ├── images/
+│   │   └── default_pfp.jpg    # Default profile picture
+│   └── favicon.ico
+├── .env.local                 # Environment variables
+├── next.config.js             # Next.js configuration
+├── tailwind.config.ts         # Tailwind configuration
+├── tsconfig.json              # TypeScript configuration
+└── package.json               # Project dependencies
+```
+</details>
 
-## Contributing
-Contributions are welcome! Please:
-- Open issues for bugs or features
-- Submit pull requests for improvements
+## 🚀 Quick Start
 
-## License
-This project is licensed under the MIT License.
+### Prerequisites
+- Node.js 16+
+- npm/yarn
+- Firebase account
+- Git
+
+### Environment Setup
+
+1️⃣ **Firebase Configuration**
+Create a new Firebase project and enable:
+- Authentication (Email/Password & Google)
+- Firestore Database
+- Realtime Database (optional)
+
+2️⃣ **Environment Variables**
+Create `.env.local` in the root directory:
+```env
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+# Socket.io Configuration (for development)
+NEXT_PUBLIC_SOCKET_URL=http://localhost:3001
+
+# Other Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NODE_ENV=development
+```
+
+3️⃣ **Firebase Security Rules**
+Add these rules to your Firestore:
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    match /posts/{postId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null && resource.data.authorId == request.auth.uid;
+    }
+  }
+}
+```
+
+4️⃣ **Development Setup**
+```bash
+# Install dependencies
+npm install
+
+# Install server dependencies
+cd server && npm install
+cd ..
+
+# Start development servers
+npm run dev          # Terminal 1: Next.js frontend
+cd server && node index.js  # Terminal 2: Socket.io backend
+```
+
+5️⃣ **TypeScript Configuration**
+The `tsconfig.json` includes:
+```json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+```
+
+## 📊 Implementation Status
+
+### ✅ Completed
+- User authentication system
+- Post creation & feed
+- Like/Unlike functionality
+- Comments system
+- Real-time messaging setup
+- Responsive dark UI
+- Route protection
+
+### 🔄 In Progress
+- Image upload system
+- User profiles
+- Advanced post features
+- Enhanced real-time features
+
+## 🤝 Contributing
+
+We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a pull request
+
+## 📝 License
+
+Licensed under the [MIT License](LICENSE).
+
+---
+
+<div align="center">
+
+Made with ❤️ by ManINeedToSleep
+
+[⬆ Back to Top](#nexus-social)
+
+</div>
 
