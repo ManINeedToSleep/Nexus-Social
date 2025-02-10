@@ -12,7 +12,7 @@ A modern social platform built with cutting-edge technologies, featuring real-ti
 
 [Demo]([your-demo-link](https://nexus-social-git-main-manineedtosleeps-projects.vercel.app)) · [Documentation](your-docs-link) · [Report Bug](issues-link)
 
-<img src="/images/frontpage.socialfeed.png" alt="Nexus Social Feed Preview" width="800"/>
+<img src="/public/images/frontpage.socialfeed.png" alt="Nexus Social Feed Preview" width="800"/>
 
 </div>
 
